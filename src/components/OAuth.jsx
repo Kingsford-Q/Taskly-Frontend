@@ -88,11 +88,8 @@ function OAuth() {
         try {
             console.log("🛠 Decoded Token:", jwtDecode(token)); // Debugging
     
-            const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),
-            });
+            const res = await fetch(`${backendUrl}/api/auth/github?code=${code}`);
+
     
             const data = await res.json();
             console.log("🔍 Google Login Response from Backend:", data);
@@ -112,11 +109,9 @@ function OAuth() {
 
     // GitHub OAuth Login
     const handleGitHubLogin = () => {
-        const redirectUri = "https://taskly-frontend-psi.vercel.app/auth/github/callback";
+        const redirectUri = "https://taskly-backend-rt4v.onrender.com/api/auth/github/callback";
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email&redirect_uri=${redirectUri}`;
-
     };
-    
     
     
 
