@@ -53,9 +53,6 @@ function OAuth() {
             console.error("🚨 Error during GitHub login:", error);
         }
     };
-    
-    
-    
 
     const handleChange = (e) => {
         setFormData({ email: e.target.value });
@@ -115,9 +112,10 @@ function OAuth() {
 
     // GitHub OAuth Login
     const handleGitHubLogin = () => {
-        const redirectUri = `${window.location.origin}/auth/github/callback`; 
+        const redirectUri = "https://taskly-frontend.vercel.app/auth/github/callback"; // Ensure this is correct!
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email&redirect_uri=${redirectUri}`;
     };
+    
     
     
 
