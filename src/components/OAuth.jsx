@@ -51,16 +51,18 @@ function OAuth() {
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     // ✅ Correct Google OAuth Success Handler
-    const handleGoogleSuccess = async (tokenResponse) => {
-        console.log("✅ Google Response:", tokenResponse);
+    const handleGoogleSuccess = async (response) => {
+        console.log("✅ Google Response:", response); // Debugging log
     
-        const token = tokenResponse.access_token; // Use `access_token`
+        const token = response.credential || response.access_token; // Ensure we get the token
         if (!token) {
-            console.error("❌ Google Login Failed: No token provided");
+            console.error("❌ Google Login Failed: No token provided", response);
             return;
         }
     
         try {
+            console.log("🛠 Decoded Token:", jwtDecode(token)); // Debugging
+    
             const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -81,12 +83,6 @@ function OAuth() {
             console.error("🚨 Error during Google login:", error);
         }
     };
-
-    const login = useGoogleLogin({
-        onSuccess: handleGoogleSuccess,
-        onError: () => console.error("Google Login Failed"),
-    });
-    
     
 
     // GitHub OAuth Login
@@ -107,7 +103,11 @@ function OAuth() {
 
                 <div className="flex flex-col gap-5 mt-5 text-left">
                     {/* ✅ Use GoogleLogin instead of useGoogleLogin */}
-                    <OAuthButton imgSrc={google} text="Continue with Google" onClick={() => login()} />
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => console.error("Google Login Failed")}
+                    />
+
                     <OAuthButton imgSrc={github} text="Continue with GitHub" onClick={handleGitHubLogin} />
 
                     <div className="flex justify-between items-center w-full mt-5">
