@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 120">
+  <!-- Background shape -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"></stop>
+      <stop offset="100%" stop-color="#3B82F6"></stop>
+    </linearGradient>
+  </defs>
+  
+  <!-- Abstract task shape -->
+  <path d="M30,40 L70,40 C85,40 85,55 70,55 L50,55 C35,55 35,70 50,70 L90,70" stroke="url(#gradient)" stroke-width="12" stroke-linecap="round" fill="none" data-index="0"></path>
+  
+  <!-- Checkmark -->
+  <circle cx="90" cy="70" r="18" fill="#10B981"></circle>
+  <path d="M80,70 L88,78 L100,62" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" data-index="1"></path>
+  
+  <!-- Text -->
+  <text x="120" y="75" font-family="Arial, sans-serif" font-weight="800" font-size="44" fill="#1E293B">
+    Task<tspan fill="#10B981">ly</tspan>
+  </text>
+  
+  <!-- Subtle design element -->
+  <path d="M120,85 L180,85" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round" opacity="0.7" data-index="2"></path>
+</svg>
