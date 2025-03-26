@@ -5,6 +5,8 @@ import { jwtDecode } from "jwt-decode";
 import logo from "../images/image.svg";
 import google from "../images/google.png";
 import github from "../images/github.png";
+import { useGoogleLogin } from "@react-oauth/google";
+
 
 const githubClientId = "Ov23liLEdXrl4orBbmkm"; // Replace with your actual GitHub OAuth Client ID
 const backendUrl = "https://taskly-backend-rt4v.onrender.com"; // Change to your backend URL
@@ -49,18 +51,16 @@ function OAuth() {
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     // ✅ Correct Google OAuth Success Handler
-    const handleGoogleSuccess = async (response) => {
-        console.log("✅ Google Response:", response); // Debugging log
+    const handleGoogleSuccess = async (tokenResponse) => {
+        console.log("✅ Google Response:", tokenResponse);
     
-        const token = response.credential || response.access_token; // Ensure we get the token
+        const token = tokenResponse.access_token; // Use `access_token`
         if (!token) {
-            console.error("❌ Google Login Failed: No token provided", response);
+            console.error("❌ Google Login Failed: No token provided");
             return;
         }
     
         try {
-            console.log("🛠 Decoded Token:", jwtDecode(token)); // Debugging
-    
             const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -81,6 +81,12 @@ function OAuth() {
             console.error("🚨 Error during Google login:", error);
         }
     };
+
+    const login = useGoogleLogin({
+        onSuccess: handleGoogleSuccess,
+        onError: () => console.error("Google Login Failed"),
+    });
+    
     
 
     // GitHub OAuth Login
@@ -101,11 +107,7 @@ function OAuth() {
 
                 <div className="flex flex-col gap-5 mt-5 text-left">
                     {/* ✅ Use GoogleLogin instead of useGoogleLogin */}
-                    <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={() => console.error("Google Login Failed")}
-                    />
-
+                    <OAuthButton imgSrc={google} text="Continue with Google" onClick={() => login()} />
                     <OAuthButton imgSrc={github} text="Continue with GitHub" onClick={handleGitHubLogin} />
 
                     <div className="flex justify-between items-center w-full mt-5">
