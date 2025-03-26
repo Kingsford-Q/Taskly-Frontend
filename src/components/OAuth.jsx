@@ -112,7 +112,7 @@ function OAuth() {
 
     // GitHub OAuth Login
     const handleGitHubLogin = () => {
-        const redirectUri = "https://taskly-frontend.vercel.app/auth/github/callback";
+        const redirectUri = "https://taskly-frontend-psi.vercel.app/auth/github/callback";
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email&redirect_uri=${redirectUri}`;
 
     };
