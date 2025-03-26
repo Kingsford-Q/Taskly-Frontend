@@ -1,70 +1,122 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from '../images/image.svg';
-import google from '../images/google.png';
-import github from '../images/github.png';
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import logo from "../images/image.svg";
+import google from "../images/google.png";
+import github from "../images/github.png";
+
+const githubClientId = "Ov23liLEdXrl4orBbmkm"; // Replace with your actual GitHub OAuth Client ID
+const backendUrl = "https://taskly-backend-rt4v.onrender.com"; // Change to your backend URL
 
 function OAuth() {
-    const [formData, setFormData] = useState({ email: '' });
-    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({ email: "" });
+    const [error, setError] = useState("");
     const emailRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         emailRef.current?.focus();
-    }, []);
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+    
+        if (token) {
+            localStorage.setItem("token", token);
+            navigate("/");
+        }
+    }, [navigate]);
+    
 
     const handleChange = (e) => {
         setFormData({ email: e.target.value });
-        setError(''); // Clear error when user starts typing
+        setError("");
     };
 
     const handleContinue = (e) => {
         e.preventDefault();
-
         const email = formData.email.trim();
         if (!email) {
-            setError('Please enter an email address');
+            setError("Please enter an email address");
             return;
         }
         if (!validateEmail(email)) {
-            setError('Please enter a valid email address');
+            setError("Please enter a valid email address");
             return;
         }
-
         navigate(`/signup?email=${encodeURIComponent(email)}`);
     };
 
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+    // ✅ Correct Google OAuth Success Handler
+    const handleGoogleSuccess = async (response) => {
+        console.log("✅ Google Response:", response); // Debugging log
+    
+        const token = response.credential || response.access_token; // Ensure we get the token
+        if (!token) {
+            console.error("❌ Google Login Failed: No token provided", response);
+            return;
+        }
+    
+        try {
+            console.log("🛠 Decoded Token:", jwtDecode(token)); // Debugging
+    
+            const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token }),
+            });
+    
+            const data = await res.json();
+            console.log("🔍 Google Login Response from Backend:", data);
+    
+            if (data.success) {
+                console.log("✅ Google Login Successful:", data);
+                localStorage.setItem("token", data.token);
+                navigate("/");
+            } else {
+                console.error("❌ Google Login Failed:", data.message);
+            }
+        } catch (error) {
+            console.error("🚨 Error during Google login:", error);
+        }
+    };
+    
+
+    // GitHub OAuth Login
+    const handleGitHubLogin = () => {
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email`;
+
+    };
+    
+
     return (
         <div className="flex justify-center items-center h-screen flex-col">
             <div className="mt-0">
-                {/* Logo */}
                 <div className="flex justify-center items-center">
                     <div className="w-[70%]">
                         <img src={logo} className="object-cover w-full" alt="Logo" />
                     </div>
                 </div>
 
-                {/* OAuth Options */}
                 <div className="flex flex-col gap-5 mt-5 text-left">
-                    <OAuthButton imgSrc={google} text="Continue with Google" />
-                    <OAuthButton imgSrc={github} text="Continue with GitHub" />
+                    {/* ✅ Use GoogleLogin instead of useGoogleLogin */}
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => console.error("Google Login Failed")}
+                    />
 
-                    {/* Divider */}
+                    <OAuthButton imgSrc={github} text="Continue with GitHub" onClick={handleGitHubLogin} />
+
                     <div className="flex justify-between items-center w-full mt-5">
                         <span className="w-full border-t border-[#633bc0]"></span>
                         <span className="w-[5%] mx-3 flex justify-center items-center">or</span>
                         <span className="w-full border-t border-[#633bc0]"></span>
                     </div>
 
-                    {/* Email Input */}
                     <div className="flex items-center justify-start w-full">
                         <form className="w-full">
-                            <label htmlFor="email" className="flex justify-start items-start">
-                                Email
-                            </label>
+                            <label htmlFor="email" className="flex justify-start items-start">Email</label>
                             <input
                                 type="email"
                                 name="email"
@@ -77,20 +129,13 @@ function OAuth() {
                         </form>
                     </div>
 
-                    {/* Continue Button */}
-                    <button
-                        onClick={handleContinue}
-                        className="text-white bg-gradient-to-r from-[#633bc0] to-[#663bca] py-3 px-14 rounded-md flex items-center justify-center hover:bg-gradient-to-r hover:from-[#10b981] hover:to-[#209971] transition-colors duration-200 mt-3"
-                    >
+                    <button onClick={handleContinue} className="text-white bg-gradient-to-r from-[#633bc0] to-[#663bca] py-3 px-14 rounded-md">
                         Continue to create an account
                     </button>
 
-                    {/* Login Link */}
                     <div className="flex justify-center items-center">
-                        <span>Already have an account? </span>
-                        <Link to="/login" className="font-semibold text-[#633bc0] cursor-pointer ml-1">
-                            Log in
-                        </Link>
+                        <span>Already have an account?</span>
+                        <Link to="/login" className="font-semibold text-[#633bc0] cursor-pointer ml-1">Log in</Link>
                     </div>
                 </div>
             </div>
@@ -98,10 +143,9 @@ function OAuth() {
     );
 }
 
-// Reusable OAuth Button Component
-const OAuthButton = ({ imgSrc, text }) => (
-    <div className="text-[#1e293b] flex justify-start items-center w-full">
-        <div className="flex gap-3 items-center justify-center border-[1px] border-[#633bc0] py-3 px-14 rounded-md w-full hover:bg-gradient-to-r hover:from-[#10b981] hover:to-[#209971] transition-colors duration-200 hover:text-white">
+const OAuthButton = ({ imgSrc, text, onClick }) => (
+    <div onClick={onClick} className="text-[#1e293b] flex justify-start items-center w-full cursor-pointer">
+        <div className="flex gap-3 items-center justify-center border-[1px] border-[#633bc0] py-3 px-14 rounded-md w-full">
             <div className="flex justify-center items-center w-6 h-6">
                 <img src={imgSrc} alt={text} className="object-contain w-full h-full" />
             </div>
