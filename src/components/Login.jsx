@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import logo from '../images/image.svg';
 
 
 function Login() {
+
+    const navigate = useNavigate();
+    
 
     const [formData, setFormData] = useState({
             email: '', 
@@ -54,6 +58,8 @@ function Login() {
             if (response.ok) {
                 setIsLogInSuccessful(true);
                 localStorage.setItem("token", data.token);
+                navigate('/')
+
             } else {
                 setError(data?.message || 'Login failed');
             }
