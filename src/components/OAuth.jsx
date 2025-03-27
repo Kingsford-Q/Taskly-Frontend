@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import logo from "../images/image.svg";
 import google from "../images/google.png";
@@ -133,7 +133,10 @@ function OAuth() {
 
                 <div className="flex flex-col gap-5 mt-5 text-left">
                     {/* ✅ Use GoogleLogin instead of useGoogleLogin */}
-                    <OAuthButton imgSrc={google} text="Continue with Google" onClick={() => login()} />
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={() => console.error("Google Login Failed")}
+                        />
                     <OAuthButton imgSrc={github} text="Continue with GitHub" onClick={handleGitHubLogin} />
 
                     <div className="flex justify-between items-center w-full mt-5">
