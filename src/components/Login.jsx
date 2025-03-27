@@ -103,6 +103,7 @@ function Login() {
                                 ref = {emailRef}
                                 onChange = {handleChange}
                                 required
+                                autoComplete="off"
                                 className = 'bg-white border-[1px] border-[#1e293b] rounded-md py-2 px-4 w-full mt-2 focus:outline-none'
                             />
                         </div>
@@ -115,6 +116,7 @@ function Login() {
                                 value = {formData.password}
                                 onChange = {handleChange}
                                 required
+                                autoComplete="off"
                                 className = 'bg-white border-[1px] border-[#1e293b] rounded-md py-2 px-4 w-full mt-2 focus:outline-none'
                             />
                         </div>
