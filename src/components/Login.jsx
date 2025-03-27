@@ -16,6 +16,7 @@ function Login() {
         useEffect(() => {
         emailRef.current?.focus();
         setFormData({ email: '', password: '' });
+        localStorage.removeItem("googleData");
         }, []);
 
     const [error, setError] = useState('');
