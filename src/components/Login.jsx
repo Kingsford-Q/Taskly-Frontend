@@ -122,6 +122,10 @@ function Login() {
                             />
                         </div>
 
+                        {error && 
+                            <p className = 'text-red-600 text-sm'> {error} </p>
+                        }
+
                         <button className = {`text-white bg-gradient-to-r from-[#633bc0] to-[#663bca] py-3 px-14 rounded-md flex items-center justify-center hover:bg-gradient-to-r hover:from-[#10b981] hover:to-[#209971] transition-colors duration-200 mt-3 ${isLoading ? 'opacity-20 cursor-not-allowed' : ''}`} type = 'submit' disabled = {isLoading} >{isLoading ? 'Logging in...' : 'Log in'}
                         </button>
 
