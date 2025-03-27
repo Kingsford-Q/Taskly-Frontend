@@ -38,37 +38,33 @@ function Login() {
         setLoading(true);
         setError('');
     
+        console.log("🚀 Sending Login Request:", formData);
+    
         try {
             const response = await fetch('https://taskly-backend-rt4v.onrender.com/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password
-                }),
+                body: JSON.stringify(formData),  // ✅ Ensure it's correctly formatted
             });
     
+            console.log("🔍 Response Status:", response.status);
             const data = await response.json();
+            console.log("📨 Response Data:", data);
     
             if (response.ok) {
                 setIsLogInSuccessful(true);
-                setFormData({ email: '', password: ''});
-                setTimeout(() => {
-                    setIsLogInSuccessful(false);
-                }, 1000);
-    
                 localStorage.setItem("token", data.token);
-    
             } else {
                 setError(data?.message || 'Login failed');
             }
         } catch (error) {
-            console.error(error.message);
+            console.error("🚨 Fetch Error:", error);
             setError('Something went wrong, try again.');
         } finally {
             setLoading(false);
         }
     };
+    
     
 
 
