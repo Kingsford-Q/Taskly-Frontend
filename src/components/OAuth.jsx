@@ -79,7 +79,7 @@ function OAuth() {
     const handleGoogleSuccess = async (tokenResponse) => {
         console.log("✅ Google Response:", tokenResponse);
     
-        const token = tokenResponse.access_token; // Use `access_token`
+        const token = tokenResponse.credential;  // 🔥 Correct: use `credential`
         if (!token) {
             console.error("❌ Google Login Failed: No token provided");
             return;
@@ -89,7 +89,7 @@ function OAuth() {
             const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),
+                body: JSON.stringify({ token }),  // ✅ Send token properly
             });
     
             const data = await res.json();
@@ -106,6 +106,7 @@ function OAuth() {
             console.error("🚨 Error during Google login:", error);
         }
     };
+    
 
     const login = useGoogleLogin({
         onSuccess: handleGoogleSuccess,
