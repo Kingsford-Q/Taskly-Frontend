@@ -58,7 +58,10 @@ function Login() {
             if (response.ok) {
                 setIsLogInSuccessful(true);
                 localStorage.setItem("token", data.token);
-                navigate('/')
+
+                setTimeout(() => {
+                    navigate('/');
+                }, 1000);
 
             } else {
                 setError(data?.message || 'Login failed');
