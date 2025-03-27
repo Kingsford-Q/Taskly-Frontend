@@ -15,6 +15,7 @@ function Login() {
     
         useEffect(() => {
         emailRef.current?.focus();
+        setFormData({ email: '', password: '' });
         }, []);
 
     const [error, setError] = useState('');
