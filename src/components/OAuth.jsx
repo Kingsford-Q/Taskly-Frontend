@@ -79,33 +79,38 @@ function OAuth() {
     const handleGoogleSuccess = async (tokenResponse) => {
         console.log("✅ Google Response:", tokenResponse);
     
-        const token = tokenResponse.credential;  // 🔥 Correct: use `credential`
+        const token = tokenResponse?.credential; // Ensure `credential` exists
         if (!token) {
             console.error("❌ Google Login Failed: No token provided");
             return;
         }
     
         try {
-            const res = await fetch(`${backendUrl}/api/auth/google-verify`, {
+            const response = await fetch(`${backendUrl}/api/auth/google-verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),  // ✅ Send token properly
+                body: JSON.stringify({ token }), 
             });
     
-            const data = await res.json();
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+            }
+    
+            const data = await response.json();
             console.log("🔍 Google Login Response from Backend:", data);
     
-            if (data.success) {
+            if (data?.success) {
                 console.log("✅ Google Login Successful:", data);
                 localStorage.setItem("token", data.token);
-                navigate("/");
+                navigate("/"); // Ensure `navigate` is imported
             } else {
-                console.error("❌ Google Login Failed:", data.message);
+                console.error("❌ Google Login Failed:", data?.message || "Unknown error");
             }
         } catch (error) {
-            console.error("🚨 Error during Google login:", error);
+            console.error("🚨 Error during Google login:", error.message || error);
         }
     };
+    
     
 
     const login = useGoogleLogin({
