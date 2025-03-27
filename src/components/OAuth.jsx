@@ -5,7 +5,6 @@ import { jwtDecode } from "jwt-decode";
 import logo from "../images/image.svg";
 import google from "../images/google.png";
 import github from "../images/github.png";
-import { useGoogleLogin } from "@react-oauth/google";
 
 
 const githubClientId = "Ov23liLEdXrl4orBbmkm"; // Replace with your actual GitHub OAuth Client ID
@@ -19,15 +18,41 @@ function OAuth() {
 
     useEffect(() => {
         emailRef.current?.focus();
+        
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get("token");
+        const code = urlParams.get("code"); // Capture GitHub OAuth Code
     
         if (token) {
             localStorage.setItem("token", token);
             navigate("/");
+        } 
+        else if (code) {
+            handleGitHubCallback(code); // Handle GitHub Login
         }
     }, [navigate]);
+
+    const handleGitHubCallback = async (code) => {
+        try {
+            const res = await fetch(`${backendUrl}/api/auth/github`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code }),
+            });
     
+            const data = await res.json();
+            console.log("🔍 GitHub Login Response from Backend:", data);
+    
+            if (data.success) {
+                localStorage.setItem("token", data.token);
+                navigate("/");
+            } else {
+                console.error("❌ GitHub Login Failed:", data.message);
+            }
+        } catch (error) {
+            console.error("🚨 Error during GitHub login:", error);
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({ email: e.target.value });
@@ -91,9 +116,10 @@ function OAuth() {
 
     // GitHub OAuth Login
     const handleGitHubLogin = () => {
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email`;
-
+        const redirectUri = "https://taskly-backend-rt4v.onrender.com/api/auth/github/callback";
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email&redirect_uri=${redirectUri}`;
     };
+    
     
 
     return (
