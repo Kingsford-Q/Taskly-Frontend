@@ -1,12 +1,7 @@
-# React + Vite
+This is the frontend of Taskly, a web-based task management application built to help users stay productive by organizing and tracking their tasks easily.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The current version of the frontend focuses on the authentication system, allowing users to register and log in securely. The interface is built with simplicity and ease of use in mind, providing a clean layout and smooth navigation between pages.
 
-Currently, two official plugins are available:
+Built using modern web technologies like Vite (React and Tailwind CSS), the app is responsive and optimized for both desktop and mobile views. It communicates with the backend through API requests to handle user login and registration, and it's structured in a way that makes it easy to scale as new features like task creation, deadlines, and reminders are added.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+As development continues, the frontend will evolve to include a full dashboard for task management, filters, priority settings, and more, providing a complete productivity solution for users.
